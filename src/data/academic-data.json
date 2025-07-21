@@ -1,0 +1,54 @@
+{
+  "campuses": ["samaru", "kongo", "shika"],
+  "levels":["100", "200", "300", "400", "500"],
+  "student_types":["undergraduate","postgraduate"],
+  "faculties": {
+    "Engineering": [
+      "Agricultural Engineering",
+      "Chemical Engineering",
+      "Civil Engineering",
+      "Computer Engineering",
+      "Electrical Engineering",
+      "Mechanical Engineering",
+      "Water Resources Engineering"
+    ],
+    "Physical Sciences": [
+      "Chemistry",
+      "Computer Science",
+      "Geography",
+      "Geology",
+      "Mathematics",
+      "Physics",
+      "Statistics"
+    ],
+    "Life Sciences": ["Biochemistry", "Biological Sciences", "Botany", "Microbiology", "Plant Science", "Zoology"],
+    "Agriculture": [
+      "Agricultural Economics",
+      "Agronomy",
+      "Animal Science",
+      "Crop Protection",
+      "Forestry",
+      "Soil Science"
+    ],
+    "Social Sciences": [
+      "Economics",
+      "Geography",
+      "Political Science",
+      "Psychology",
+      "Public Administration",
+      "Sociology"
+    ],
+    "Arts": ["Arabic", "English", "French", "Hausa", "History", "Linguistics"],
+    "Education": ["Adult Education", "Educational Foundations", "Science Education", "Vocational Education"],
+    "Medicine": ["Anatomy", "Medicine and Surgery", "Nursing", "Pharmacology", "Physiology"],
+    "Veterinary Medicine": [
+      "Veterinary Anatomy",
+      "Veterinary Medicine",
+      "Veterinary Pathology",
+      "Veterinary Public Health"
+    ],
+    "Law": ["Private Law", "Public Law"],
+    "Management Sciences": ["Accounting", "Business Administration", "Public Administration"],
+    "Environmental Sciences": ["Architecture", "Building", "Environmental Management", "Urban Planning"]
+  }
+}

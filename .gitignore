@@ -1,0 +1,27 @@
+# Inside /server/.gitignore
+
+# Ignore dependencies
+node_modules/
+
+# Ignore output if you're using TypeScript or Babel
+dist/
+build/
+
+# Ignore environment config
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore editor folders
+.vscode/
+.idea/
+
+# Optional: TypeScript cache
+*.tsbuildinfo
