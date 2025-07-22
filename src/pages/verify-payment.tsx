@@ -1,7 +1,15 @@
 "use client"
 
+/**
+ * Payment Verification Page with Placeholder Functionality
+ * Uses mock submission for development
+ *
+ * INTEGRATION POINT: Replace with real API calls for payment verification
+ */
+
 import type React from "react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { PageLayout } from "../components/layout/page-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button"
@@ -9,7 +17,7 @@ import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
 import { Upload, CheckCircle, AlertCircle } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
-import { updatePaymentStatus } from "../api"
+import { updatePaymentStatus } from "../api/studentApi"
 
 /**
  * Payment verification form data interface
@@ -24,11 +32,11 @@ interface PaymentVerificationData {
 }
 
 /**
- * Enhanced Payment Verification Page Component
- * Integrates with real API for payment status updates
+ * Payment Verification Page Component with Placeholder Functionality
  */
 export default function VerifyPaymentPage() {
-  const { user, refreshProfile } = useAuth()
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   // Form state
   const [formData, setFormData] = useState<PaymentVerificationData>({
@@ -95,7 +103,7 @@ export default function VerifyPaymentPage() {
   }
 
   /**
-   * Handle form submission
+   * Handle form submission - Updated to call real API
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -123,50 +131,60 @@ export default function VerifyPaymentPage() {
     setSubmitStatus({ type: null, message: "" })
 
     try {
-      console.log("Submitting payment verification:", {
-        studentId: user.studentId,
+      // Simulate file upload and form processing
+      console.log("Processing payment verification for", user.studentId)
+      console.log("Form data:", {
         transactionRef: formData.transactionRef,
         amount: formData.amount,
         paymentMethod: formData.paymentMethod,
         fileName: formData.receiptFile.name,
       })
 
-      // Simulate file upload delay
+      // Simulate API delay for file upload and processing
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Update payment status to true (paid)
-      const response = await updatePaymentStatus(user.studentId, true)
+      // Call the real updatePaymentStatus API
+      console.log("Calling updatePaymentStatus API...")
 
-      if (response.success) {
-        setSubmitStatus({
-          type: "success",
-          message: "Payment evidence submitted successfully! Your payment status has been updated.",
-        })
+      const response = await updatePaymentStatus(user.id, true) // Set paidStatus to true
 
-        // Refresh user profile to reflect updated payment status
-        await refreshProfile()
+      console.log("Payment status updated successfully:", response)
 
-        // Reset form
-        setFormData({
-          transactionRef: "",
-          paymentDate: "",
-          amount: "",
-          paymentMethod: "",
-          notes: "",
-          receiptFile: null,
-        })
+      // Show success message
+      setSubmitStatus({
+        type: "success",
+        message:
+          "Payment verification successful! Your payment status has been updated and you can now proceed with hostel selection.",
+      })
 
-        // Reset file input
-        const fileInput = document.getElementById("receipt") as HTMLInputElement
-        if (fileInput) fileInput.value = ""
-      } else {
-        throw new Error(response.message || "Failed to update payment status")
-      }
+      // Reset form
+      setFormData({
+        transactionRef: "",
+        paymentDate: "",
+        amount: "",
+        paymentMethod: "",
+        notes: "",
+        receiptFile: null,
+      })
+
+      // Reset file input
+      const fileInput = document.getElementById("receipt") as HTMLInputElement
+      if (fileInput) fileInput.value = ""
+
+      // Optional: Redirect to hostel selection after a delay
+      setTimeout(() => {
+        navigate("/hostel-selection")
+      }, 3000)
     } catch (error: any) {
       console.error("Payment verification error:", error)
+
+      // Extract error message from API response
+      const errorMessage =
+        error.response?.data?.error || error.response?.data?.message || error.message || "Failed to verify payment"
+
       setSubmitStatus({
         type: "error",
-        message: error.response?.data?.message || error.message || "Failed to submit payment evidence",
+        message: `Payment verification failed: ${errorMessage}`,
       })
     } finally {
       setIsSubmitting(false)
@@ -181,6 +199,16 @@ export default function VerifyPaymentPage() {
           <p className="text-gray-600 mt-2">Upload evidence of your school fees payment for verification</p>
         </div>
 
+        {/* Updated Notice */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <p className="text-blue-800 text-sm">
+              <strong>Payment Verification:</strong> Upload your payment receipt and we'll verify your payment status
+              automatically. Once verified, you'll be able to proceed with hostel selection.
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Status Message */}
         {submitStatus.type && (
           <Card
@@ -188,20 +216,35 @@ export default function VerifyPaymentPage() {
               submitStatus.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
             }`}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-3">
                 {submitStatus.type === "success" ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
                 ) : (
-                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <AlertCircle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
                 )}
-                <p
-                  className={`text-sm font-medium ${
-                    submitStatus.type === "success" ? "text-green-800" : "text-red-800"
-                  }`}
-                >
-                  {submitStatus.message}
-                </p>
+                <div className="flex-1">
+                  <p className={`font-medium ${submitStatus.type === "success" ? "text-green-800" : "text-red-800"}`}>
+                    {submitStatus.type === "success" ? "Payment Verified Successfully!" : "Verification Failed"}
+                  </p>
+                  <p className={`text-sm mt-1 ${submitStatus.type === "success" ? "text-green-700" : "text-red-700"}`}>
+                    {submitStatus.message}
+                  </p>
+                  {submitStatus.type === "success" && (
+                    <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                      <Button onClick={() => navigate("/hostel-selection")} className="bg-green-600 hover:bg-green-700">
+                        Proceed to Hostel Selection
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => navigate("/dashboard")}
+                        className="border-green-300 text-green-700 hover:bg-green-50"
+                      >
+                        Back to Dashboard
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -333,7 +376,7 @@ export default function VerifyPaymentPage() {
 
               {/* Submit Button */}
               <Button type="submit" className="w-full bg-slate-800 hover:bg-slate-700" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting Evidence..." : "Submit Payment Evidence"}
+                {isSubmitting ? "Verifying Payment..." : "Verify Payment & Update Status"}
               </Button>
             </form>
           </CardContent>

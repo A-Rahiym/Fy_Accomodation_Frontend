@@ -1,62 +1,38 @@
-"use client"
-
 /**
- * Hostel Selection Page with Real API Integration
- * Fetches hostel data from backend API
+ * Hostel Selection Page with Eligibility Check and Real API Integration
+ * Checks student eligibility before allowing hostel selection
  */
-
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { PageLayout } from "../components/layout/page-layout"
 import { ChoiceCard } from "../components/hostel/choice-card"
 import { ConfirmationModal } from "../components/hostel/confirmation-modal"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { MapPin, Users, AlertCircle } from "lucide-react"
+import { MapPin, Users, AlertCircle, CheckCircle, XCircle, CreditCard, FileText } from "lucide-react"
 import type { HostelChoice, Hostel } from "../types"
 import { useAuth } from "../contexts/auth-context"
 import LoadingSpinner from "../components/ui/loading-spinner"
-import {submitHostelChoices} from "../api/studentApi"
-import { getHostelDetails } from  "../api/hostelApi"
-// import { mockHostels } from "../data/mock_data"
-// import { useNavigate } from "react-router-dom" // Uncomment if you want to redirect after submission
-
-// Mock data matching your backend structure
-// const mockHostels: Hostel[] = [
-//   { id: "1", name: "Ahmadu Bello Hall", gender: "Male" as "Male" | "Female", campus: "Main" },
-//   { id: "2", name: "Queen Amina Hall", gender: "Female" as "Male" | "Female", campus: "Main" },
-//   { id: "3", name: "Ribadu Hall", gender: "Male" as "Male" | "Female", campus: "Main" },
-//   { id: "4", name: "Kongo Hall", gender: "Female" as "Male" | "Female", campus: "Main" },
-//   { id: "5", name: "Zaria Hall", gender: "Male" as "Male" | "Female", campus: "Main" },
-// ]
+import { submitHostelChoices, checkStudentEligibility } from "../api/studentApi"
+import { getHostelDetails } from "../api/hostelApi"
 
 /**
- * API function to get hostels - replace with your actual API call
- */
-// const getAllHostels = async (gender: string, campus: string): Promise<Hostel[]> => {
-//   try {
-//     console.log(`INTEGRATION POINT: Fetching hostels for gender: ${gender}, campus: ${campus}`)
+ * Student Eligibility Interface
+ **/
+interface StudentEligibility {
+  is_eligible: boolean
+  has_paid: boolean
+  already_submitted: boolean
+}
 
-//     // TODO: Replace this with your actual API call
-//     // const response = await fetch(`/api/hostels?gender=${gender}&campus=${campus}`)
-//     // const data = await response.json()
-//     // return data
-
-//     // PLACEHOLDER: Simulate API delay and return mock data
-//     await new Promise((resolve) => setTimeout(resolve, 1000))
-
-//     return mockHostels
-//   } catch (error) {
-//     console.error("Error fetching hostels:", error)
-//     throw new Error("Failed to fetch hostels")
-//   }
-// }
-
-/**
- * Hostel Selection Page Component
- * Uses mock data - replace with API integration
- */
 export default function HostelSelectionPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
+
+  // Eligibility state
+  const [eligibility, setEligibility] = useState<StudentEligibility | null>(null)
+  const [isCheckingEligibility, setIsCheckingEligibility] = useState(true)
+  const [eligibilityError, setEligibilityError] = useState<string | null>(null)
 
   // State for hostel choices
   const [choices, setChoices] = useState<HostelChoice[]>([
@@ -65,57 +41,61 @@ export default function HostelSelectionPage() {
     { choice: "third", hostel: null },
   ])
 
-  // State for available hostels (using mock data)
+  // State for available hostels
   const [availableHostels, setAvailableHostels] = useState<Hostel[]>([])
 
   // UI state
   const [editingChoice, setEditingChoice] = useState<string | null>(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoadingHostels, setIsLoadingHostels] = useState(true)
+  const [isLoadingHostels, setIsLoadingHostels] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   /**
-   * PLACEHOLDER: Load mock hostels
-   * TODO: Replace with actual API call
+   * Check student eligibility on component mount
    */
-  // useEffect(() => {
-  //   const loadHostels = async () => {
-  //     if (!user) return
+  useEffect(() => {
+    const checkEligibility = async () => {
+      if (!user) return
 
-  //     try {
-  //       setIsLoadingHostels(true)
-  //       setError(null)
+      try {
+        setIsCheckingEligibility(true)
+        setEligibilityError(null)
 
-  //       // Simulate API delay
-  //       await new Promise((resolve) => setTimeout(resolve, 1000))
+        console.log("Checking eligibility for student:", user.studentId)
 
-  //       // PLACEHOLDER: Filter hostels by gender
-  //       const filteredHostels = mockHostels.filter((hostel) => hostel.gender === user.gender)
+        // Call the eligibility check API
+        const response = await checkStudentEligibility(user.id)
 
-  //       setAvailableHostels(filteredHostels)
-  //       console.log("PLACEHOLDER: Loaded hostels for", user.gender, "students:", filteredHostels.length)
-  //     } catch (error) {
-  //       console.error("Failed to load hostels:", error)
-  //     } finally {
-  //       setIsLoadingHostels(false)
-  //     }
-  //   }
+        console.log("Eligibility response:", response)
+        setEligibility(response)
+      } catch (error: any) {
+        console.error("Failed to check eligibility:", error)
+        setEligibilityError(error.message || "Failed to check eligibility. Please try again.")
+      } finally {
+        setIsCheckingEligibility(false)
+      }
+    }
 
-  //   loadHostels()
-  // }, [user])
+    checkEligibility()
+  }, [user])
 
   /**
-   * Load hostels from API
-   * Uses the actual API call instead of mock data
+   * Load hostels from API (only if eligible)
    */
   useEffect(() => {
     const loadHostels = async () => {
-      if (!user) return
+      if (!user || !eligibility) return
+
+      // Only load hostels if student is eligible
+      const isEligible = eligibility.is_eligible && eligibility.has_paid && !eligibility.already_submitted
+      if (!isEligible) return
 
       try {
         setIsLoadingHostels(true)
         setError(null)
+
+        console.log("Loading hostels for eligible student...")
 
         // Make actual API call using the hostelApi function
         const response = await getHostelDetails(user.gender, user.campus)
@@ -134,7 +114,7 @@ export default function HostelSelectionPage() {
     }
 
     loadHostels()
-  }, [user])
+  }, [user, eligibility])
 
   /**
    * Handle hostel selection for a specific choice
@@ -183,17 +163,20 @@ export default function HostelSelectionPage() {
         choice2Id: choices.find((c) => c.choice === "second")?.hostel?.id || null,
         choice3Id: choices.find((c) => c.choice === "third")?.hostel?.id || null,
       }
+
       console.log("Submitting hostel choices for", user.studentId, ":", choiceData)
+
       // Make actual API call using submitHostelChoices
-      console.log(user.id , choiceData);
+      console.log(user.id, choiceData)
       const response = await submitHostelChoices(user.id, choiceData)
+
       console.log("Hostel choices submitted successfully:", response)
 
       // Show success message
       alert("Hostel selections submitted successfully!")
 
-      // Optionally redirect to dashboard or update application status
-      // navigate("/dashboard")
+      // Optionally redirect to dashboard
+      navigate("/dashboard")
     } catch (error: any) {
       console.error("Submission error:", error)
 
@@ -206,8 +189,163 @@ export default function HostelSelectionPage() {
     }
   }
 
+  /**
+   * Generate eligibility message based on response
+   */
+  const getEligibilityMessage = (): string => {
+    if (!eligibility) return ""
+
+    const messages: string[] = []
+
+    if (!eligibility.has_paid) {
+      messages.push("You must complete your payment before selecting a hostel.")
+    }
+
+    if (eligibility.already_submitted) {
+      messages.push("You have already submitted your hostel choices.")
+    }
+
+    if (!eligibility.is_eligible && eligibility.has_paid && !eligibility.already_submitted) {
+      messages.push("You are not currently eligible for hostel selection.")
+    }
+
+    return messages.join(" ")
+  }
+
+  /**
+   * Render eligibility action buttons
+   */
+  const renderEligibilityActions = () => {
+    if (!eligibility) return null
+
+    const buttons = []
+
+    if (!eligibility.has_paid) {
+      buttons.push(
+        <Button key="payment" onClick={() => navigate("/pay-accommodation")} className="bg-blue-600 hover:bg-blue-700">
+          <CreditCard className="w-4 h-4 mr-2" />
+          Go to Payment Page
+        </Button>,
+      )
+    }
+
+    if (eligibility.already_submitted) {
+      buttons.push(
+        <Button key="view-choices" onClick={() => navigate("/dashboard")} variant="outline">
+          <FileText className="w-4 h-4 mr-2" />
+          View Submitted Choices
+        </Button>,
+      )
+    }
+
+    return <div className="flex flex-col sm:flex-row gap-4 justify-center">{buttons}</div>
+  }
+
   // Calculate selected count
   const selectedCount = choices.filter((choice) => choice.hostel !== null).length
+
+  // Show loading spinner while checking eligibility
+  if (isCheckingEligibility) {
+    return (
+      <PageLayout>
+        <LoadingSpinner text="Checking your eligibility..." />
+      </PageLayout>
+    )
+  }
+
+  // Show eligibility error
+  if (eligibilityError) {
+    return (
+      <PageLayout>
+        <div className="max-w-2xl mx-auto text-center space-y-4">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
+          <h2 className="text-2xl font-bold text-gray-900">Error Checking Eligibility</h2>
+          <p className="text-gray-600">{eligibilityError}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Try Again
+          </Button>
+        </div>
+      </PageLayout>
+    )
+  }
+
+  // Check if student is eligible
+  const isEligible = eligibility?.is_eligible && eligibility?.has_paid && !eligibility?.already_submitted
+
+  // Show ineligibility screen
+  if (eligibility && !isEligible) {
+    return (
+      <PageLayout>
+        <div className="max-w-2xl mx-auto space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Hostel Selection</h1>
+            <p className="text-gray-600 mt-2">Check your eligibility status below</p>
+          </div>
+
+          {/* Eligibility Status Card */}
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-800">
+                <XCircle className="w-6 h-6" />
+                Not Eligible for Hostel Selection
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-red-700 text-lg">{getEligibilityMessage()}</p>
+
+              {/* Eligibility Breakdown */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <span className="font-medium">General Eligibility</span>
+                  <div className="flex items-center gap-2">
+                    {eligibility.is_eligible ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    )}
+                    <span className={eligibility.is_eligible ? "text-green-600" : "text-red-600"}>
+                      {eligibility.is_eligible ? "Eligible" : "Not Eligible"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <span className="font-medium">Payment Status</span>
+                  <div className="flex items-center gap-2">
+                    {eligibility.has_paid ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    )}
+                    <span className={eligibility.has_paid ? "text-green-600" : "text-red-600"}>
+                      {eligibility.has_paid ? "Paid" : "Not Paid"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                  <span className="font-medium">Submission Status</span>
+                  <div className="flex items-center gap-2">
+                    {!eligibility.already_submitted ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    )}
+                    <span className={!eligibility.already_submitted ? "text-green-600" : "text-red-600"}>
+                      {eligibility.already_submitted ? "Already Submitted" : "Not Submitted"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              {renderEligibilityActions()}
+            </CardContent>
+          </Card>
+        </div>
+      </PageLayout>
+    )
+  }
 
   // Show loading spinner while fetching hostels
   if (isLoadingHostels) {
@@ -234,6 +372,7 @@ export default function HostelSelectionPage() {
     )
   }
 
+  // Render normal hostel selection interface for eligible students
   return (
     <PageLayout>
       <div className="space-y-8">
@@ -244,13 +383,15 @@ export default function HostelSelectionPage() {
           </p>
         </div>
 
-        {/* API Integration Status */}
+        {/* Eligibility Confirmed */}
         <Card className="bg-green-50 border-green-200">
           <CardContent className="p-4">
-            <p className="text-green-800 text-sm">
-              <strong>API Integration:</strong> This page is now connected to your backend API and fetches real hostel
-              data.
-            </p>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <p className="text-green-800 text-sm font-medium">
+                Eligibility confirmed! You can now select your hostel preferences.
+              </p>
+            </div>
           </CardContent>
         </Card>
 

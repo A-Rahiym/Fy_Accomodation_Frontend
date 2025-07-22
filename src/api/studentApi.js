@@ -157,3 +157,53 @@ export const selectAccommodation = async (formData, token) => {
     throw error
   }
 }
+
+
+/**
+ * Check if a student is eligible to submit hostel choices
+ * @param {string} studentId - Student ID (UUID)
+ * @returns {Promise<Object>} Eligibility status
+ */
+export const checkStudentEligibility = async (studentId) => {
+  try {
+    console.log("Checking eligibility for student:", studentId);
+
+    const token = localStorage.getItem("studentToken");
+    if (!token) {
+      throw new Error("Authentication token not found. Please log in.");
+    }
+
+    const res = await axiosInstance.get(`/student/${studentId}/eligibility`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("Eligibility check error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+export const getStudentStatus = async (studentId) => {
+  try {
+    const token = localStorage.getItem("studentToken");
+    if (!token) {
+      throw new Error("Authentication token not found. Please log in.");
+    }
+
+    console.log("Fetching status for student:", studentId);
+    const res = await axiosInstance.get(`/student/${studentId}/status`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("Status fetch error:", error.response?.data || error.message);
+    throw error;
+  }
+};

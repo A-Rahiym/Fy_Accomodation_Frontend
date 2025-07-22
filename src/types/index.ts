@@ -183,3 +183,13 @@ export interface AcademicData {
   student_types: string[],
   faculties: Record<string, string[]>
 }
+
+
+export interface StudentStatus {
+  has_paid: boolean
+  fcfs_id: string | null
+  assigned_room_id: string | null
+  choice1_hostel: HostelChoice | null
+  choice2_hostel: HostelChoice | null
+  choice3_hostel: HostelChoice | null
+}
