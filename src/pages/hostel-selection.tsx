@@ -6,12 +6,14 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { PageLayout } from "../components/layout/page-layout"
 import { ChoiceCard } from "../components/hostel/choice-card"
+import { HostelChoicesSummary } from "../components/hostel/hostelSummary"
 import { ConfirmationModal } from "../components/hostel/confirmation-modal"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { MapPin, Users, AlertCircle, CheckCircle, XCircle, CreditCard, FileText } from "lucide-react"
 import type { HostelChoice, Hostel } from "../types"
 import { useAuth } from "../contexts/auth-context"
+import {useStudentStatus} from "../contexts/status-context"
 import LoadingSpinner from "../components/ui/loading-spinner"
 import { submitHostelChoices, checkStudentEligibility } from "../api/studentApi"
 import { getHostelDetails } from "../api/hostelApi"
@@ -27,6 +29,7 @@ interface StudentEligibility {
 
 export default function HostelSelectionPage() {
   const { user } = useAuth()
+  const {status} = useStudentStatus()
   const navigate = useNavigate()
 
   // Eligibility state
@@ -273,79 +276,53 @@ export default function HostelSelectionPage() {
   const isEligible = eligibility?.is_eligible && eligibility?.has_paid && !eligibility?.already_submitted
 
   // Show ineligibility screen
-  if (eligibility && !isEligible) {
-    return (
-      <PageLayout>
-        <div className="max-w-2xl mx-auto space-y-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Hostel Selection</h1>
-            <p className="text-gray-600 mt-2">Check your eligibility status below</p>
-          </div>
+// Show ineligibility screen
+if (eligibility && !isEligible) {
+  // Determine failure reason
+  let failureMessage = ""
+  let messageColor = "text-gray-700" // Default neutral
+  let extraComponent = null // ✨ For HostelChoicesSummary
 
-          {/* Eligibility Status Card */}
-          <Card className="border-red-200 bg-red-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-800">
-                <XCircle className="w-6 h-6" />
-                Not Eligible for Hostel Selection
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-red-700 text-lg">{getEligibilityMessage()}</p>
+  if (!eligibility.has_paid) {
+    failureMessage = "You are not eligible because your school fees have not been confirmed."
+    messageColor = "text-red-700"
+  } else if (eligibility.already_submitted) {
+    failureMessage = "You have already submitted an application."
+    messageColor = "text-blue-700"
 
-              {/* Eligibility Breakdown */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                  <span className="font-medium">General Eligibility</span>
-                  <div className="flex items-center gap-2">
-                    {eligibility.is_eligible ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-600" />
-                    )}
-                    <span className={eligibility.is_eligible ? "text-green-600" : "text-red-600"}>
-                      {eligibility.is_eligible ? "Eligible" : "Not Eligible"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                  <span className="font-medium">Payment Status</span>
-                  <div className="flex items-center gap-2">
-                    {eligibility.has_paid ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-600" />
-                    )}
-                    <span className={eligibility.has_paid ? "text-green-600" : "text-red-600"}>
-                      {eligibility.has_paid ? "Paid" : "Not Paid"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
-                  <span className="font-medium">Submission Status</span>
-                  <div className="flex items-center gap-2">
-                    {!eligibility.already_submitted ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-600" />
-                    )}
-                    <span className={!eligibility.already_submitted ? "text-green-600" : "text-red-600"}>
-                      {eligibility.already_submitted ? "Already Submitted" : "Not Submitted"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              {renderEligibilityActions()}
-            </CardContent>
-          </Card>
-        </div>
-      </PageLayout>
-    )
+    // ✨ Show summary of choices user already submitted
+    if (status) {
+      extraComponent = <HostelChoicesSummary status={status} />
+    }
+  } else if (!eligibility.is_eligible) {
+    failureMessage = "You are not eligible for hostel selection at this time."
   }
+
+  return (
+    <PageLayout>
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Hostel Selection</h1>
+          <p className="text-gray-600 mt-2">Check your eligibility status below</p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">Status Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className={`text-lg ${messageColor}`}>{failureMessage}</p>
+
+            {extraComponent && (
+              <div className="pt-2">{extraComponent}</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </PageLayout>
+  )
+}
+
 
   // Show loading spinner while fetching hostels
   if (isLoadingHostels) {

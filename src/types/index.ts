@@ -193,3 +193,12 @@ export interface StudentStatus {
   choice2_hostel: HostelChoice | null
   choice3_hostel: HostelChoice | null
 }
+
+
+export interface AlreadySubmittedCardProps {
+  choices: {
+    choice1_hostel: HostelChoice | null
+    choice2_hostel: HostelChoice | null
+    choice3_hostel: HostelChoice | null
+  }
+}
