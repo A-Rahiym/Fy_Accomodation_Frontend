@@ -1,60 +1,50 @@
 import { PageLayout } from "../components/layout/page-layout"
 import { useAuth } from "../contexts/auth-context"
+import { useStudentStatus } from "../contexts/status-context"
 
-// Import dashboard-specific components
 import { ProgressIndicator } from "../components/dashboard/progress-indicator"
 import { StudentProfile } from "../components/dashboard/student-profile"
 import { ApplicationStatusCard } from "../components/dashboard/application-status"
 import { PaymentStatusCard } from "../components/dashboard/payment-status"
 import { AnnouncementsCard } from "../components/dashboard/announcements"
 import { RoomAllocationCard } from "../components/dashboard/room-allocation"
+import { mockProgressSteps, mockAnnouncements } from "../data/mock-data"
 
-// Import mock data
-import { mockApplicationStatus, mockProgressSteps, mockAnnouncements } from "../data/mock-data"
-
-/**
- * Dashboard Page Component
- * Main dashboard interface showing student information and application status
- */
 export default function DashboardPage() {
-  // Get current user data from authentication context
   const { user } = useAuth()
+  const { status, loading } = useStudentStatus()
 
-  // Don't render if user is not available (handled by PageLayout)
-  if (!user) {
-    return null
+  if (!user || loading || !status) return null
+
+  const hasApplied =
+    status.choice1_hostel !== null || status.choice2_hostel !== null || status.choice3_hostel !== null
+
+  const appStatus = {
+    hasApplied,
+    applicationDate: "July 20, 2025", // Replace with actual timestamp from backend if available
+    roomAllocated: status.assigned_room_id !== null,
+    hasSubmittedPayment: status.has_paid,
   }
+
+
 
   return (
     <PageLayout>
-      {/* Main dashboard grid layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main content area - takes up 2/3 of the width on large screens */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Dashboard header with title and progress indicator */}
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-bold text-gray-900">My Dashboard</h2>
-            {/* Progress indicator showing application completion status */}
             <ProgressIndicator steps={mockProgressSteps} />
           </div>
 
-          {/* Student profile card displaying personal information */}
           <StudentProfile studentInfo={user} />
-
-          {/* Application status card showing accommodation application progress */}
-          <ApplicationStatusCard status={mockApplicationStatus} />
-
-          {/* Payment status card showing school fees payment status */}
-          <PaymentStatusCard status={mockApplicationStatus} />
+          <ApplicationStatusCard status={appStatus} />
+          <PaymentStatusCard status={appStatus} />
         </div>
 
-        {/* Sidebar - takes up 1/3 of the width on large screens */}
         <div className="space-y-6">
-          {/* Announcements card displaying important notices */}
           <AnnouncementsCard announcements={mockAnnouncements} />
-
-          {/* Room allocation card showing current accommodation status */}
-          <RoomAllocationCard status={mockApplicationStatus} />
+          <RoomAllocationCard status={appStatus} />
         </div>
       </div>
     </PageLayout>

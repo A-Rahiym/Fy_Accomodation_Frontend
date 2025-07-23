@@ -21,7 +21,7 @@ export function ApplicationStatusCard({ status }: ApplicationStatusProps) {
             <p className="text-orange-400 font-medium">
               {status.hasApplied
                 ? `Application submitted on ${status.applicationDate}`
-                : "You have not apply for accommodation yet"}
+                : "You have not applied for accommodation yet"}
             </p>
           </div>
           {!status.hasApplied && (

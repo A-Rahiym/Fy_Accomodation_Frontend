@@ -14,7 +14,9 @@ export function RoomAllocationCard({ status }: RoomAllocationProps) {
       <CardContent>
         <div className="text-center py-8">
           <p className="text-orange-500 font-medium">
-            {status.roomAllocated ? "Room allocated: Block A, Room 101" : "You have not apply for accommodation"}
+            {status.roomAllocated
+              ? "Room allocated: Block A, Room 101"
+              : "You have not been assigned a room yet"}
           </p>
         </div>
       </CardContent>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { getStudentStatus } from "../api/student"
+import { getStudentStatus } from "../api/studentApi.js"
 import { useAuth } from "./auth-context"
 import type { StudentStatus } from "../types"
 
