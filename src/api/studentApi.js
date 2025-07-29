@@ -207,3 +207,25 @@ export const getStudentStatus = async (studentId) => {
     throw error;
   }
 };
+
+export const checkStudentRoomInfo = async (studentId) => {
+  try {
+    console.log("Getting student room info:", studentId);
+
+    const token = localStorage.getItem("studentToken");
+    if (!token) {
+      throw new Error("Authentication token not found. Please log in.");
+    }
+
+    const res = await axiosInstance.get(`/student/${studentId}/room-info`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("Eligibility check error:", error.response?.data || error.message);
+    throw error;
+  }
+};
