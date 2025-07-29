@@ -46,7 +46,6 @@ export default function DashboardPage() {
           <AnnouncementsCard announcements={mockAnnouncements} />
           <RoomAllocationCard status={appStatus} />
         </div>
-        {console.log(status)}
       </div>
     </PageLayout>
   )

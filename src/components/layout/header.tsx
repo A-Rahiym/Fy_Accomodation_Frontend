@@ -21,7 +21,7 @@ export function Header({ studentInfo }: HeaderProps) {
   const location = useLocation()
 
   // Authentication context for logout functionality
-  const { logout } = useAuth()
+  const { logout , user } = useAuth()
 
   /**
    * Navigation items configuration
@@ -30,7 +30,7 @@ export function Header({ studentInfo }: HeaderProps) {
   const navItems: NavItem[] = [
     { label: "Dashboard", href: "/dashboard" },
     { label: "Hostel Selection", href: "/hostel-selection" },
-    { label: "Pay Accommodation", href: "/pay-accommodation" },
+    // { label: "Pay Accommodation", href: "/pay-accommodation" },
     { label: "Verify Payment", href: "/verify-payment" },
     { label: "FAQ", href: "/faq" },
   ]

@@ -202,3 +202,9 @@ export interface AlreadySubmittedCardProps {
     choice3_hostel: HostelChoice | null
   }
 }
+
+export interface RoomInfo {
+  hostel_name: string
+  block_name: string
+  room_name: string
+}
