@@ -6,26 +6,50 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
-import { useStudentStatus } from "../contexts/status-context" // ✅ Hook to get student status
+import { useStudentStatus } from "../contexts/status-context" 
+import { setAssignmentPaymentPaid } from "../api/studentApi" // ✅ Import our frontend helper
+import {useAuth} from "../contexts/auth-context"
+
 
 export default function PayAccommodationPage() {
   const navigate = useNavigate()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const { status, loading } = useStudentStatus() // ✅ Get assigned_room_id
+  const [isProcessing, setIsProcessing] = useState(false) // track payment request state
+  const [paymentResponse, setPaymentResponse] = useState(null) // ✅ store response data from API
+  const { status, loading } = useStudentStatus() // ✅ get student status (includes assigned_room_id)
+const { user } = useAuth()
 
   const accommodationFee = 45000
   const serviceFee = 2000
   const totalAmount = accommodationFee + serviceFee
 
+  /**
+   * Handle payment button click
+   * - Calls backend API to set assignment payment to "paid"
+   * - Stores the response in state
+   */
   const handlePayment = async () => {
-    setIsProcessing(true)
-    setTimeout(() => {
-      setIsProcessing(false)
-      alert("Payment initiated! You will be redirected to the payment gateway.")
-    }, 2000)
+    setIsProcessing(true) // show "Processing..." on button
+
+    try {
+      // Call backend with student_id
+      const res = await setAssignmentPaymentPaid(user?.id)
+
+      // Store the response (so we can check payment_status later)
+      setPaymentResponse(res)
+
+      // If backend confirms "paid", show success
+      if (res?.data?.payment_status === "paid") {
+        alert("Accommodation payment successful! 🎉")
+      }
+    } catch (error) {
+      console.error("Payment error:", error.message)
+      alert("Payment failed. Please try again.")
+    } finally {
+      setIsProcessing(false) // reset processing state
+    }
   }
 
-  // 🔁 Show loading state while fetching status
+  // 🔁 Show loading while fetching status from context
   if (loading) {
     return (
       <PageLayout>
@@ -36,14 +60,16 @@ export default function PayAccommodationPage() {
     )
   }
 
-  // ❌ Show this if student has NOT been assigned a room
+  // ❌ If no assigned room, don’t allow payment
   if (!status?.assigned_room_id) {
     return (
       <PageLayout>
         <div className="max-w-2xl mx-auto space-y-6 py-12">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Accommodation Payment</h1>
-            <p className="text-gray-600 mt-2">You must be assigned a room before proceeding with payment.</p>
+            <p className="text-gray-600 mt-2">
+              You must be assigned a room before proceeding with payment.
+            </p>
           </div>
 
           <Card className="bg-yellow-50 border-yellow-200">
@@ -51,9 +77,7 @@ export default function PayAccommodationPage() {
               <CardTitle className="text-yellow-700">Room Assignment Pending</CardTitle>
             </CardHeader>
             <CardContent className="text-yellow-800">
-              <p>
-                You have not been assigned a room yet. Please wait for your room allocation before making a payment.
-              </p>
+              <p>You have not been assigned a room yet. Please wait for allocation.</p>
             </CardContent>
           </Card>
 
@@ -67,7 +91,43 @@ export default function PayAccommodationPage() {
     )
   }
 
-  // ✅ Main payment form (only shown if assigned_room_id exists)
+  // ✅ If payment has been made successfully, show success message + receipt
+  if (paymentResponse?.data?.payment_status === "paid") {
+    return (
+      <PageLayout>
+        <div className="max-w-2xl mx-auto text-center py-12 space-y-6">
+          <h1 className="text-3xl font-bold text-green-700">Payment Successful 🎉</h1>
+          <p className="text-gray-600">Your accommodation payment has been confirmed.</p>
+
+          {/* ✅ Receipt Card */}
+          <Card className="border-green-300">
+            <CardHeader>
+              <CardTitle>Payment Receipt</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-left">
+              <p><strong>Student ID:</strong> {paymentResponse.data.student_id}</p>
+              <p><strong>Room ID:</strong> {paymentResponse.data.room_id}</p>
+              <p><strong>Block ID:</strong> {paymentResponse.data.block_id}</p>
+              <p><strong>Hostel ID:</strong> {paymentResponse.data.hostel_id}</p>
+              <p><strong>Paid At:</strong> {new Date(paymentResponse.data.assigned_at).toLocaleString()}</p>
+              <p><strong>Status:</strong> {paymentResponse.data.payment_status}</p>
+            </CardContent>
+          </Card>
+
+          <div className="space-x-4">
+            <Button onClick={() => window.print()} className="bg-green-600 hover:bg-green-700">
+              Print Receipt
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/Dashboard")}>
+              Back to Dashboard
+            </Button>
+          </div>
+        </div>
+      </PageLayout>
+    )
+  }
+
+  // ✅ Default: Show payment form if assigned_room_id exists and not yet paid
   return (
     <PageLayout>
       <div className="max-w-2xl mx-auto space-y-8">
@@ -126,7 +186,7 @@ export default function PayAccommodationPage() {
             </div>
             <Button
               className="w-full bg-green-600 hover:bg-green-700"
-              onClick={handlePayment}
+              onClick={handlePayment} // ✅ Calls backend
               disabled={isProcessing}
             >
               {isProcessing

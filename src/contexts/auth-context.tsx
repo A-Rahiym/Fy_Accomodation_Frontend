@@ -41,10 +41,8 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   // State for storing current user data
   const [user, setUser] = useState<StudentInfo | null>(null)
-
   // State for tracking loading status during auth operations
   const [isLoading, setIsLoading] = useState(true)
-
   /**
    * Effect to check for existing user session on app startup
    * Attempts to restore user session and refresh profile data
@@ -247,6 +245,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Updates specific user data fields and syncs with server
    * @param userData - Partial user data to update
    */
+  
   const updateUser = async (userData: Partial<StudentInfo>) => {
     if (user) {
       const updatedUser = { ...user, ...userData }

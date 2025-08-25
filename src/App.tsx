@@ -56,7 +56,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
  * Main App Component
  * Sets up routing and handles global app logic
  */
-export default function App() {
+function App  ()  {
   const { isLoading } = useAuth();
   const location = useLocation();
 
@@ -95,6 +95,7 @@ export default function App() {
           }
         />
 
+        {/* Protected routes - require authentication */}
         <Route
           path="/room-allocated"
           element={
@@ -104,7 +105,6 @@ export default function App() {
           }
         />
 
-        {/* Protected routes - require authentication */}
         <Route
           path="/dashboard"
           element={
@@ -170,3 +170,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App

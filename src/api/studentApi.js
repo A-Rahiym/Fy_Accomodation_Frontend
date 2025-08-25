@@ -229,3 +229,43 @@ export const checkStudentRoomInfo = async (studentId) => {
     throw error;
   }
 };
+
+
+/**
+ * Set the payment status of an assignment to "paid" for a given student.
+ *
+ * This function calls the backend endpoint:
+ *    PUT /assignments/:studentId/payment/paid
+ *
+ * - It requires the student to be authenticated (token stored in localStorage).
+ * - No request body is needed because the backend automatically sets the status to "paid".
+ *
+ * @param {string} studentId - The unique ID of the student whose assignment payment should be updated.
+ * @returns {Promise<Object>} The response data from the backend, including updated assignment details.
+ * @throws {Error} If the authentication token is missing or the API request fails.
+ * }
+ */
+export const setAssignmentPaymentPaid = async (studentId) => {
+  try {
+    const token = localStorage.getItem("studentToken");
+    if (!token) {
+      throw new Error("Authentication token not found. Please log in.");
+    }
+
+    console.log(`Setting assignment payment for student ${studentId} to "paid"`);
+
+    const res = await axiosInstance.put(
+      `/student/assignments/${studentId}/paid`,
+      {}, // no body needed, because backend defaults to "paid"
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data; // Return the response to the caller
+  } catch (error) {
+    console.error("Error setting assignment payment:", error.message);
+    throw error;
+  }
+};

@@ -16,7 +16,7 @@ export interface StudentInfo {
   department: string
   /** */ 
   id: string,
-
+  
   avatar?: string
   /** Student's gender */
   gender: "Male" | "Female"
