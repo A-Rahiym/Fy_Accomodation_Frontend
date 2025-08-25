@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Button } from "./ui/button"
 import { MapPin, Building, Home, CreditCard, Loader2 } from "lucide-react"
 import type { RoomInfo } from "../types/index"
+import { useRoom } from "../contexts/room-context";
 
 // Import your API function
 import { checkStudentRoomInfo } from "../api/studentApi"
@@ -15,18 +16,24 @@ interface RoomAllocationPageProps {
 }
 
 export function RoomAllocationPage({ studentId }: RoomAllocationPageProps) {
-  const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { roomInfo, loading, error, fetchRoomInfo } = useRoom();
+  const [RoomInfo, setRoomInfo] = useState<RoomInfo | null>(null)
+  const [Loading, setLoading] = useState(true)
+  const [Error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
+    fetchRoomInfo(studentId);
+  }, [studentId]);
+
+  useEffect(() => {
+    
     const fetchRoomInfo = async () => {
       try {
         setLoading(true)
         setError(null)
         const response = await checkStudentRoomInfo(studentId)
-        console.log("Room Info:",response.data)
+        // console.log("Room Info:",response.data)
         setRoomInfo(response.data)
       } catch (err: any) {
         setError(err.message || "Failed to fetch room information")
@@ -44,7 +51,7 @@ export function RoomAllocationPage({ studentId }: RoomAllocationPageProps) {
     navigate("/pay-accommodation")
   }
 
-  if (loading) {
+  if (Loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex items-center space-x-2">

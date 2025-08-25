@@ -9,6 +9,7 @@ import { Label } from "../components/ui/label"
 import { useStudentStatus } from "../contexts/status-context" 
 import { setAssignmentPaymentPaid } from "../api/studentApi" // ✅ Import our frontend helper
 import {useAuth} from "../contexts/auth-context"
+import { useRoom } from "../contexts/room-context"
 
 
 export default function PayAccommodationPage() {
@@ -16,7 +17,8 @@ export default function PayAccommodationPage() {
   const [isProcessing, setIsProcessing] = useState(false) // track payment request state
   const [paymentResponse, setPaymentResponse] = useState(null) // ✅ store response data from API
   const { status, loading } = useStudentStatus() // ✅ get student status (includes assigned_room_id)
-const { user } = useAuth()
+  const { user } = useAuth()
+  const { roomInfo,fetchRoomInfo } = useRoom();
 
   const accommodationFee = 45000
   const serviceFee = 2000
@@ -105,10 +107,10 @@ const { user } = useAuth()
               <CardTitle>Payment Receipt</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-left">
-              <p><strong>Student ID:</strong> {paymentResponse.data.student_id}</p>
-              <p><strong>Room ID:</strong> {paymentResponse.data.room_id}</p>
-              <p><strong>Block ID:</strong> {paymentResponse.data.block_id}</p>
-              <p><strong>Hostel ID:</strong> {paymentResponse.data.hostel_id}</p>
+              <p><strong>Student ID:</strong> {user?.name}</p>
+              <p><strong>Room :</strong> {roomInfo?.room_name}</p>
+              <p><strong>Block :</strong> {roomInfo?.block_name}</p>
+              <p><strong>Hostel :</strong> {roomInfo?.hostel_name}</p>
               <p><strong>Paid At:</strong> {new Date(paymentResponse.data.assigned_at).toLocaleString()}</p>
               <p><strong>Status:</strong> {paymentResponse.data.payment_status}</p>
             </CardContent>

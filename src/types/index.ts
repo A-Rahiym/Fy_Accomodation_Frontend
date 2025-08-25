@@ -28,6 +28,11 @@ export interface StudentInfo {
   campus: string
 }
 
+export interface RoomInfo {
+  block_name: string;
+  hostel_name: string;
+  room_name: string;
+}
 /**
  * Application Status Interface
  * Tracks the status of a student's accommodation application
@@ -43,6 +48,7 @@ export interface ApplicationStatus {
   applicationDate?: string
   /** Date when payment was submitted */
   paymentDate?: string
+  room_assigned : RoomInfo
 }
 
 /**

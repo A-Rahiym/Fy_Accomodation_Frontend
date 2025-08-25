@@ -1,6 +1,8 @@
 import { PageLayout } from "../components/layout/page-layout"
 import { useAuth } from "../contexts/auth-context"
 import { useStudentStatus } from "../contexts/status-context"
+import { useRoom } from "../contexts/room-context"
+import { useEffect } from "react"
 
 import { ProgressIndicator } from "../components/dashboard/progress-indicator"
 import { StudentProfile } from "../components/dashboard/student-profile"
@@ -13,17 +15,25 @@ import { mockProgressSteps, mockAnnouncements } from "../data/mock-data"
 export default function DashboardPage() {
   const { user } = useAuth()
   const { status, loading } = useStudentStatus()
+  const { roomInfo,fetchRoomInfo } = useRoom();
 
   if (!user || loading || !status) return null
 
+    useEffect(() => {
+      fetchRoomInfo(user?.id);
+    }, [user?.id]);
+
   const hasApplied =
     status.choice1_hostel !== null || status.choice2_hostel !== null || status.choice3_hostel !== null
+
+
 
   const appStatus = {
     hasApplied,
     applicationDate: "July 20, 2025", // Replace with actual timestamp from backend if available
     roomAllocated: status.assigned_room_id !== null,
     hasSubmittedPayment: status.has_paid,
+    room_assigned: roomInfo
   }
 
 

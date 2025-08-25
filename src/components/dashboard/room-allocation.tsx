@@ -1,18 +1,18 @@
-import { useNavigate } from "react-router-dom"
-import { Button } from "../ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import type { ApplicationStatus } from "../../types"
+import { useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import type { ApplicationStatus } from "../../types";
 
 interface RoomAllocationProps {
-  status: ApplicationStatus
+  status: ApplicationStatus;
 }
 
 export function RoomAllocationCard({ status }: RoomAllocationProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate("/room-allocated")
-  }
+    navigate("/room-allocated");
+  };
 
   return (
     <Card>
@@ -23,17 +23,14 @@ export function RoomAllocationCard({ status }: RoomAllocationProps) {
         <div className="text-center py-8 space-y-4">
           <p className="text-orange-500 font-medium">
             {status.roomAllocated
-              ? "Room allocated: Block A, Room 101"
+              ? `Room allocated: ${status.room_assigned.room_name}, Block ${status.room_assigned.block_name}, Hostel ${status.room_assigned.hostel_name}`
               : "You have not been assigned a room yet"}
           </p>
-          <Button
-            onClick={handleNavigate}
-            disabled={!status.roomAllocated}
-          >
+          <Button onClick={handleNavigate} disabled={!status.roomAllocated}>
             View Room Details
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

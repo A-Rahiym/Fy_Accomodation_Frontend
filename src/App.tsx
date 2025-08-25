@@ -2,6 +2,7 @@ import type React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "./contexts/auth-context";
+import { RoomProvider } from "./contexts/room-context";
 
 // Import all page components
 import DashboardPage from "./pages/dashboard";
@@ -56,7 +57,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
  * Main App Component
  * Sets up routing and handles global app logic
  */
-function App  ()  {
+function App() {
   const { isLoading } = useAuth();
   const location = useLocation();
 
@@ -72,103 +73,105 @@ function App  ()  {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Routes>
-        {/* Root route - redirects based on authentication status */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <RoomProvider>
+        <Routes>
+          {/* Root route - redirects based on authentication status */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        {/* Public routes - accessible only when not authenticated */}
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          }
-        />
+          {/* Public routes - accessible only when not authenticated */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
 
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <RegisterPage />
-            </PublicRoute>
-          }
-        />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <RegisterPage />
+              </PublicRoute>
+            }
+          />
 
-        {/* Protected routes - require authentication */}
-        <Route
-          path="/room-allocated"
-          element={
-            <ProtectedRoute>
-              <RoomAllocation />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected routes - require authentication */}
+          <Route
+            path="/room-allocated"
+            element={
+              <ProtectedRoute>
+                <RoomAllocation />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/hostel-selection"
-          element={
-            <ProtectedRoute>
-              <HostelSelectionPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/hostel-selection"
+            element={
+              <ProtectedRoute>
+                <HostelSelectionPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/pay-accommodation"
-          element={
-            <ProtectedRoute>
-              <PayAccommodationPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/pay-accommodation"
+            element={
+              <ProtectedRoute>
+                <PayAccommodationPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/verify-payment"
-          element={
-            <ProtectedRoute>
-              <VerifyPaymentPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/verify-payment"
+            element={
+              <ProtectedRoute>
+                <VerifyPaymentPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/faq"
-          element={
-            <ProtectedRoute>
-              <FAQPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/faq"
+            element={
+              <ProtectedRoute>
+                <FAQPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Catch-all route for 404 pages */}
-        <Route
-          path="*"
-          element={
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="text-center">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  Page Not Found
-                </h1>
-                <p className="text-gray-600">
-                  The page you're looking for doesn't exist.
-                </p>
+          {/* Catch-all route for 404 pages */}
+          <Route
+            path="*"
+            element={
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                    Page Not Found
+                  </h1>
+                  <p className="text-gray-600">
+                    The page you're looking for doesn't exist.
+                  </p>
+                </div>
               </div>
-            </div>
-          }
-        />
-      </Routes>
+            }
+          />
+        </Routes>
+      </RoomProvider>
     </div>
   );
 }
 
-export default App
+export default App;
