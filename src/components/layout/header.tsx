@@ -1,14 +1,15 @@
-import { Bell, User, LogOut } from "lucide-react"
-import { useNavigate, useLocation } from "react-router-dom"
-import type { StudentInfo, NavItem } from "../../types"
-import { useAuth } from "../../contexts/auth-context"
+import { Bell, User, LogOut } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import type { StudentInfo, NavItem } from "../../types";
+import { useAuth } from "../../contexts/auth-context";
+import abulogo from "../../images/abu-logo.png";
 
 /**
  * Props for the Header component
  */
 interface HeaderProps {
   /** Student information to display in header */
-  studentInfo: StudentInfo
+  studentInfo: StudentInfo;
 }
 
 /**
@@ -17,11 +18,11 @@ interface HeaderProps {
  */
 export function Header({ studentInfo }: HeaderProps) {
   // React Router hooks for navigation and current location
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Authentication context for logout functionality
-  const { logout , user } = useAuth()
+  const { logout, user } = useAuth();
 
   /**
    * Navigation items configuration
@@ -33,24 +34,24 @@ export function Header({ studentInfo }: HeaderProps) {
     // { label: "Pay Accommodation", href: "/pay-accommodation" },
     { label: "Verify Payment", href: "/verify-payment" },
     { label: "FAQ", href: "/faq" },
-  ]
+  ];
 
   /**
    * Handle user logout
    * Clears authentication and redirects to login page
    */
   const handleLogout = () => {
-    logout()
-    navigate("/login")
-  }
+    logout();
+    navigate("/login");
+  };
 
   /**
    * Handle navigation to different routes
    * @param href - The route path to navigate to
    */
   const handleNavigation = (href: string) => {
-    navigate(href)
-  }
+    navigate(href);
+  };
 
   return (
     <header className="bg-slate-800 text-white shadow-lg">
@@ -61,9 +62,14 @@ export function Header({ studentInfo }: HeaderProps) {
             {/* Logo/Brand - clickable to go to dashboard */}
             <button
               onClick={() => handleNavigation("/dashboard")}
-              className="text-lg font-semibold hover:text-blue-300 transition-colors"
+              className="flex items-center space-x-8 text-lg font-semibold hover:text-blue-300 transition-colors"
             >
-              ABU Accommodation Portal
+              <img
+                src={abulogo} // make sure the import is correct: import abulogo from "../images/abu-logo.png";
+                alt="ABU Logo"
+                className="h-8 w-8  object-contain"
+              />
+              <span>ABU Accommodation Portal</span>
             </button>
 
             {/* Main navigation menu - hidden on mobile */}
@@ -87,10 +93,10 @@ export function Header({ studentInfo }: HeaderProps) {
           {/* Right side: Notifications and user profile */}
           <div className="flex items-center space-x-4">
             {/* Notifications button */}
-            <button className="p-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
+            {/* <button className="p-2 text-white hover:bg-slate-700 rounded-lg transition-colors">
               <Bell className="h-5 w-5" />
               <span className="sr-only">Notifications</span>
-            </button>
+            </button> */}
 
             {/* User profile dropdown */}
             <div className="relative group">
@@ -115,14 +121,18 @@ export function Header({ studentInfo }: HeaderProps) {
               {/* Dropdown menu - shown on hover */}
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 {/* User info section */}
-                <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm font-medium text-gray-900">{studentInfo.name}</p>
-                  <p className="text-xs text-gray-500">{studentInfo.studentId}</p>
-                </div>
+                {/* <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="text-sm font-medium text-gray-900">
+                    {studentInfo.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {studentInfo.studentId}
+                  </p>
+                </div> */}
 
                 {/* Menu items */}
                 <div className="py-2">
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                  {/* <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </button>
@@ -130,7 +140,7 @@ export function Header({ studentInfo }: HeaderProps) {
                   <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                     <Bell className="mr-2 h-4 w-4" />
                     Notifications
-                  </button>
+                  </button> */}
 
                   {/* Logout button */}
                   <button
@@ -147,5 +157,5 @@ export function Header({ studentInfo }: HeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }

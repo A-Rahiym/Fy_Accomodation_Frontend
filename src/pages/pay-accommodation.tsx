@@ -98,7 +98,7 @@ export default function PayAccommodationPage() {
     return (
       <PageLayout>
         <div className="max-w-2xl mx-auto text-center py-12 space-y-6">
-          <h1 className="text-3xl font-bold text-green-700">Payment Successful 🎉</h1>
+          <h1 className="text-3xl font-bold text-green-700">Payment Successful</h1>
           <p className="text-gray-600">Your accommodation payment has been confirmed.</p>
 
           {/* ✅ Receipt Card */}
@@ -203,9 +203,9 @@ export default function PayAccommodationPage() {
           <Button variant="outline" onClick={() => navigate("/hostel-selection")}>
             Back to Hostel Selection
           </Button>
-          <Button variant="outline" onClick={() => navigate("/verify-payment")}>
+          {/* <Button variant="outline" onClick={() => navigate("/verify-payment")}>
             Already Paid? Verify Payment
-          </Button>
+          </Button> */}
         </div>
       </div>
     </PageLayout>

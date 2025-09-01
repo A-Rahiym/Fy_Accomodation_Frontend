@@ -211,7 +211,7 @@ export default function VerifyPaymentPage() {
   return (
     <PageLayout>
       <div className="max-w-2xl mx-auto space-y-8">
-        {/* Testing Notice Banner */}
+        {/* Testing Notice Banner
         <Card className="bg-yellow-50 border-yellow-200">
           <CardContent className="p-4">
             <p className="text-yellow-800 font-medium">
@@ -219,7 +219,7 @@ export default function VerifyPaymentPage() {
               not perform actual payment verification.
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Verify School Fees Payment

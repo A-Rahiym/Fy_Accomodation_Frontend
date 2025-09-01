@@ -498,7 +498,7 @@ export function RegistrationWizard() {
           </select>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-white font-medium mb-2">
             Do you have any accessibility needs?
           </label>
@@ -510,7 +510,7 @@ export function RegistrationWizard() {
             rows={4}
             className="w-full px-4 py-3 bg-blue-100 text-gray-800 rounded-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all resize-none"
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

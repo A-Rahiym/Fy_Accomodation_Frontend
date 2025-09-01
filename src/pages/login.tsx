@@ -121,9 +121,9 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Login Title */}
-          <h2 className="text-4xl font-bold text-white text-center mb-8">
+          <h2 className="text-2xl font-bold text-white text-center mb-4">
             Log in
           </h2>
 
@@ -153,7 +153,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 required
                 disabled={isSubmitting}
-                className="w-full px-4 py-4 bg-gray-200 text-gray-800 rounded-xl text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all disabled:opacity-50"
+                className="w-full px-3 py-3 bg-gray-200 text-gray-800 rounded-xl text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all disabled:opacity-50"
               />
             </div>
 
@@ -175,7 +175,7 @@ export default function LoginPage() {
                   onChange={handleChange}
                   required
                   disabled={isSubmitting}
-                  className="w-full px-4 py-4 pr-12 bg-gray-200 text-gray-800 rounded-xl text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all disabled:opacity-50"
+                  className="w-full px-3 py-3 pr-12 bg-gray-200 text-gray-800 rounded-xl text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all disabled:opacity-50"
                 />
 
                 {/* Password visibility toggle button */}
@@ -233,7 +233,7 @@ export default function LoginPage() {
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 disabled={isSubmitting}
               >
-                Sign up
+                Register
               </button>
             </div>
           </form>
