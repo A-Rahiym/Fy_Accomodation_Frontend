@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "../contexts/auth-context";
 import type { LoginCredentials } from "../types";
+import abuLogo from "../images/abu-logo.png";
 
 /**
  * Login Page Component
@@ -105,9 +106,9 @@ export default function LoginPage() {
         <div className="text-center mb-12">
           {/* ABU Logo */}
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mr-4 overflow-hidden">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mr-4 overflow-hidden">
               <img
-                src="../images/abu-logo.png" // Path to your actual logo
+                src={abuLogo} // Path to your actual logo
                 alt="ABU Logo"
                 className="w-12 h-12 object-contain"
               />
