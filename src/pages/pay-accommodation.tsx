@@ -20,7 +20,7 @@ export default function PayAccommodationPage() {
   const { user } = useAuth()
   const { roomInfo,fetchRoomInfo } = useRoom();
 
-  const accommodationFee = 45000
+  const accommodationFee = 20000
   const serviceFee = 2000
   const totalAmount = accommodationFee + serviceFee
 

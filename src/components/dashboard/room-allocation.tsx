@@ -23,7 +23,7 @@ export function RoomAllocationCard({ status }: RoomAllocationProps) {
         <div className="text-center py-8 space-y-4">
           <p className="text-orange-500 font-medium">
             {status.roomAllocated
-              ? `Room allocated: ${status.room_assigned.room_name}, Block ${status.room_assigned.block_name}, Hostel ${status.room_assigned.hostel_name}`
+              ? `Room allocated: `
               : "You have not been assigned a room yet"}
           </p>
           <Button onClick={handleNavigate} disabled={!status.roomAllocated}>
