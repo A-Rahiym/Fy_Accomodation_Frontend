@@ -21,8 +21,8 @@ export function PaymentStatusCard({ status }: PaymentStatusProps) {
         <div className="text-center py-8">
           <p className="text-orange-500 font-medium mb-6">
             {status.hasSubmittedPayment
-              ? `Payment evidence submitted on ${status.paymentDate}`
-              : "You have not submit Evidence for School Fees Payment"}
+              ? "Your School Fees payment have been verified"
+              : "Your school fees payment has not been verified."}
           </p>
           {!status.hasSubmittedPayment && (
             <Button className="bg-slate-800 text-white hover:bg-slate-700" onClick={() => navigate("/verify-payment")}>

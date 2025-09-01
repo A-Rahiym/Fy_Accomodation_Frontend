@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
 /**
  * Login Page Component
@@ -8,11 +8,11 @@ import type React from "react"
  * Redirects authenticated users to dashboard
  */
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { useAuth } from "../contexts/auth-context"
-import type { LoginCredentials } from "../types"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useAuth } from "../contexts/auth-context";
+import type { LoginCredentials } from "../types";
 
 /**
  * Login Page Component
@@ -20,55 +20,55 @@ import type { LoginCredentials } from "../types"
  */
 export default function LoginPage() {
   // Authentication context and navigation
-  const { isAuthenticated, isLoading, login } = useAuth()
-  const navigate = useNavigate()
+  const { isAuthenticated, isLoading, login } = useAuth();
+  const navigate = useNavigate();
 
   // Form state management
   const [credentials, setCredentials] = useState<LoginCredentials>({
     studentId: "",
     password: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
    * Redirect authenticated users to dashboard
    */
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate("/dashboard", { replace: true })
+      navigate("/dashboard", { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate])
+  }, [isAuthenticated, isLoading, navigate]);
 
   /**
    * Handle form submission
    * @param e - Form submit event
    */
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsSubmitting(true)
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
 
     try {
       // Attempt to login with provided credentials
-      const result = await login(credentials)
+      const result = await login(credentials);
 
       if (result.success) {
         // Redirect to dashboard on successful login
-        navigate("/dashboard")
+        navigate("/dashboard");
       } else {
         // Show error message on failed login
-        setError(result.message)
+        setError(result.message);
       }
     } catch (err) {
       // Handle unexpected errors
-      setError("An error occurred. Please try again.")
-      console.error("Login error:", err)
+      setError("An error occurred. Please try again.");
+      console.error("Login error:", err);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   /**
    * Handle input field changes
@@ -78,8 +78,8 @@ export default function LoginPage() {
     setCredentials((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+  };
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -90,12 +90,12 @@ export default function LoginPage() {
           <p className="mt-2 text-white">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Don't render if user is already authenticated (will redirect)
   if (isAuthenticated) {
-    return null
+    return null;
   }
 
   return (
@@ -105,20 +105,12 @@ export default function LoginPage() {
         <div className="text-center mb-12">
           {/* ABU Logo */}
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mr-4">
-              {/* ABU Emblem - simplified version */}
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-blue-900"
-              >
-                <path d="M20 2L35 12V28L20 38L5 28V12L20 2Z" stroke="currentColor" strokeWidth="2" fill="none" />
-                <circle cx="20" cy="20" r="8" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                <path d="M20 14V26M14 20H26" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mr-4 overflow-hidden">
+              <img
+                src="../images/abu-logo.png" // Path to your actual logo
+                alt="ABU Logo"
+                className="w-12 h-12 object-contain"
+              />
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold text-white">ABU ZARIA</h1>
@@ -130,7 +122,9 @@ export default function LoginPage() {
         {/* Login Form */}
         <div className="space-y-8">
           {/* Login Title */}
-          <h2 className="text-4xl font-bold text-white text-center mb-8">Log in</h2>
+          <h2 className="text-4xl font-bold text-white text-center mb-8">
+            Log in
+          </h2>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -143,7 +137,10 @@ export default function LoginPage() {
 
             {/* Registration Number input */}
             <div className="space-y-2">
-              <label htmlFor="studentId" className="block text-white text-lg font-medium">
+              <label
+                htmlFor="studentId"
+                className="block text-white text-lg font-medium"
+              >
                 Registration Number
               </label>
               <input
@@ -161,7 +158,10 @@ export default function LoginPage() {
 
             {/* Password input with visibility toggle */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-white text-lg font-medium">
+              <label
+                htmlFor="password"
+                className="block text-white text-lg font-medium"
+              >
                 Password
               </label>
               <div className="relative">
@@ -184,12 +184,16 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isSubmitting}
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Forgot Password Link */}
+            {/* Forgot Password Link
             <div className="text-right">
               <button
                 type="button"
@@ -201,7 +205,7 @@ export default function LoginPage() {
               >
                 Forgot password?
               </button>
-            </div>
+            </div> */}
 
             {/* Submit button */}
             <button
@@ -234,15 +238,15 @@ export default function LoginPage() {
           </form>
 
           {/* Demo credentials info */}
-          <div className="mt-8 p-4 bg-blue-900/30 rounded-lg border border-blue-700/30">
+          {/* <div className="mt-8 p-4 bg-blue-900/30 rounded-lg border border-blue-700/30">
             <p className="text-xs text-blue-200 font-medium mb-2 text-center">Demo Credentials:</p>
             <div className="text-xs text-blue-300 text-center space-y-1">
               <p>Registration Number: U18CO1002</p>
               <p>Password: password123</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -40,24 +40,21 @@ export const mockProgressSteps: ProgressStep[] = [
  * Mock announcements
  * System-wide announcements and important notices
  */
+const today = new Date().toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
 export const mockAnnouncements: Announcement[] = [
   {
     id: "1",
     title: "Get Ready for Clearance!",
-    content:
-      "The clearance process for the current academic session will commence on [Date]. Prepare your documents and check the official university website for the full schedule.",
-    date: "2025-01-15",
+    content: `The clearance process for the current academic session will commence on ${today}. Prepare your documents and check the official university website for the full schedule.`,
+    date: new Date().toISOString().split("T")[0], // e.g. "2025-09-01"
     priority: "high",
   },
-  {
-    id: "2",
-    title: "Accommodation Application Deadline",
-    content:
-      "Reminder: The deadline for accommodation applications is approaching. Submit your hostel preferences before the deadline to secure your accommodation.",
-    date: "2025-01-10",
-    priority: "medium",
-  },
-]
+];
 
 /**
  * Mock hostels data
